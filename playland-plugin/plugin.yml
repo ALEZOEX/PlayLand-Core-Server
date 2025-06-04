@@ -1,0 +1,55 @@
+name: PlayLandCore
+version: 1.0.0
+main: ru.playland.core.PlayLandCorePlugin
+api-version: 1.21
+author: PlayLand Team
+description: Revolutionary Minecraft server optimization with AI, Quantum Computing, and Blockchain
+
+commands:
+  playland:
+    description: PlayLand Core management commands
+    usage: /playland <command>
+    permission: playland.admin
+  plstats:
+    description: Show PlayLand Core statistics
+    usage: /plstats
+    permission: playland.stats
+
+permissions:
+  playland.admin:
+    description: Full access to PlayLand Core
+    default: op
+  playland.stats:
+    description: View PlayLand Core statistics
+    default: true
+
+softdepend: []
+loadbefore: []
+
+# PlayLand Core Configuration
+playland:
+  optimization:
+    enabled: true
+    neural-network: true
+    quantum-computing: true
+    blockchain-consensus: true
+    vanilla-safe-mode: true
+  
+  performance:
+    memory-threshold: 80.0
+    cpu-threshold: 75.0
+    tps-target: 20.0
+  
+  features:
+    collision-optimization: true
+    io-optimization: true
+    database-optimization: true
+    threading-optimization: true
+    chunk-optimization: true
+    entity-optimization: true
+    network-optimization: true
+    
+  logging:
+    level: INFO
+    detailed-stats: true
+    performance-reports: true

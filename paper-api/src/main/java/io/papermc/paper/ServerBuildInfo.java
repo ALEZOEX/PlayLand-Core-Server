@@ -20,6 +20,11 @@ public interface ServerBuildInfo {
     Key BRAND_PAPER_ID = Key.key("papermc", "paper");
 
     /**
+     * The brand id for PlayLand Core Server.
+     */
+    Key BRAND_PLAYLAND_ID = Key.key("playland", "core");
+
+    /**
      * Gets the {@code ServerBuildInfo}.
      *
      * @return the {@code ServerBuildInfo}

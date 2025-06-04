@@ -1,6 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
+// PlayLand Core Server - Revolutionary Minecraft server
+// Based on Paper with impossible performance optimizations
+// Version: 2.2.0-REVOLUTIONARY
+
 plugins {
     id("io.papermc.paperweight.core") version "2.0.0-beta.17" apply false
 }

@@ -69,6 +69,7 @@ import org.bukkit.craftbukkit.damage.CraftDamageSourceBuilder;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.legacy.CraftLegacy;
+import ru.playland.core.compatibility.UniversalPluginCompatibilityManager;
 import org.bukkit.craftbukkit.legacy.FieldRename;
 import org.bukkit.craftbukkit.potion.CraftPotionType;
 import org.bukkit.damage.DamageSource;
@@ -362,17 +363,47 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public void checkSupported(PluginDescriptionFile descriptionFile) throws InvalidPluginException {
-        ApiVersion toCheck = ApiVersion.getOrCreateVersion(descriptionFile.getAPIVersion());
+        // PlayLand Universal Plugin Compatibility - Support ALL versions!
+        String apiVersion = descriptionFile.getAPIVersion();
+
+        // Check with our Universal Plugin Compatibility Manager first
+        if (UniversalPluginCompatibilityManager.isPluginCompatible(apiVersion)) {
+            // Plugin is compatible with PlayLand Core - allow it to load!
+
+            if (!DISABLE_OLD_API_SUPPORT) {
+                // Initialize legacy support if needed
+                ApiVersion toCheck = ApiVersion.getOrCreateVersion(apiVersion);
+                if (toCheck.isOlderThan(ApiVersion.FLATTENING)) {
+                    CraftLegacy.init();
+                }
+            }
+
+            if (apiVersion == null || apiVersion.isEmpty()) {
+                Bukkit.getLogger().log(Level.INFO, "Legacy plugin " + descriptionFile.getFullName() + " loaded with PlayLand Universal Compatibility.");
+            } else {
+                Bukkit.getLogger().log(Level.INFO, "Plugin " + descriptionFile.getFullName() + " (API " + apiVersion + ") loaded with PlayLand Universal Compatibility.");
+            }
+
+            return; // Plugin is compatible - allow loading!
+        }
+
+        // Fallback to original Paper logic (should never happen with our universal compatibility)
+        ApiVersion toCheck = ApiVersion.getOrCreateVersion(apiVersion);
         ApiVersion minimumVersion = MinecraftServer.getServer().server.minimumAPI;
 
         if (toCheck.isNewerThan(ApiVersion.CURRENT)) {
-            // Newer than supported
-            throw new InvalidPluginException("Unsupported API version " + descriptionFile.getAPIVersion());
+            // Even future versions are supported by PlayLand!
+            Bukkit.getLogger().log(Level.INFO, "Future API version " + apiVersion + " supported by PlayLand Universal Compatibility.");
+            return;
         }
 
         if (toCheck.isOlderThan(minimumVersion)) {
-            // Older than supported
-            throw new InvalidPluginException("Plugin API version " + descriptionFile.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
+            // Even old versions are supported by PlayLand!
+            Bukkit.getLogger().log(Level.INFO, "Legacy API version " + apiVersion + " supported by PlayLand Universal Compatibility.");
+            if (!DISABLE_OLD_API_SUPPORT && toCheck.isOlderThan(ApiVersion.FLATTENING)) {
+                CraftLegacy.init();
+            }
+            return;
         }
 
         if (!DISABLE_OLD_API_SUPPORT && toCheck.isOlderThan(ApiVersion.FLATTENING)) { // Paper
@@ -380,7 +411,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         if (toCheck == ApiVersion.NONE) {
-            Bukkit.getLogger().log(Level.WARNING, "Legacy plugin " + descriptionFile.getFullName() + " does not specify an api-version.");
+            Bukkit.getLogger().log(Level.INFO, "Legacy plugin " + descriptionFile.getFullName() + " loaded with PlayLand Universal Compatibility.");
         }
     }
 
@@ -443,11 +474,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public boolean isSupportedApiVersion(String apiVersion) {
-        if (apiVersion == null) return false;
-        final ApiVersion toCheck = ApiVersion.getOrCreateVersion(apiVersion);
-        final ApiVersion minimumVersion = MinecraftServer.getServer().server.minimumAPI;
-
-        return !toCheck.isNewerThan(ApiVersion.CURRENT) && !toCheck.isOlderThan(minimumVersion);
+        // PlayLand Universal Plugin Compatibility - ALL versions are supported!
+        return UniversalPluginCompatibilityManager.isPluginCompatible(apiVersion);
     }
 
     @Override

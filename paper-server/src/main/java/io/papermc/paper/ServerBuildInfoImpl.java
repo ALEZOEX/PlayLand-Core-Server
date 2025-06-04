@@ -13,6 +13,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.Main;
 import org.jetbrains.annotations.NotNull;
 
+import static io.papermc.paper.ServerBuildInfo.BRAND_PLAYLAND_ID;
+import static io.papermc.paper.ServerBuildInfo.BRAND_PAPER_ID;
+
 public record ServerBuildInfoImpl(
     Key brandId,
     String brandName,
@@ -30,7 +33,7 @@ public record ServerBuildInfoImpl(
     private static final String ATTRIBUTE_GIT_BRANCH = "Git-Branch";
     private static final String ATTRIBUTE_GIT_COMMIT = "Git-Commit";
 
-    private static final String BRAND_PAPER_NAME = "Paper";
+    private static final String BRAND_PAPER_NAME = "PlayLand Core Server";
 
     private static final String BUILD_DEV = "DEV";
 
@@ -42,7 +45,7 @@ public record ServerBuildInfoImpl(
         this(
             getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
                 .map(Key::key)
-                .orElse(BRAND_PAPER_ID),
+                .orElse(BRAND_PLAYLAND_ID),
             getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
                 .orElse(BRAND_PAPER_NAME),
             SharedConstants.getCurrentVersion().getId(),
@@ -61,7 +64,11 @@ public record ServerBuildInfoImpl(
 
     @Override
     public boolean isBrandCompatible(final @NotNull Key brandId) {
-        return brandId.equals(this.brandId);
+        // PlayLand Core Server is compatible with Paper, Spigot, and Bukkit plugins
+        return brandId.equals(this.brandId) ||
+               brandId.equals(BRAND_PAPER_ID) ||
+               brandId.equals(Key.key("spigotmc", "spigot")) ||
+               brandId.equals(Key.key("bukkit", "bukkit"));
     }
 
     @Override
