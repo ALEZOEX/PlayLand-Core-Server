@@ -79,7 +79,7 @@ jobs:
         # Создание информационного файла
         echo "PlayLand Core v2.2.0 - Revolutionary Minecraft Server" > artifacts/README.txt
         echo "Built on: $(date)" >> artifacts/README.txt
-        echo "Minecraft Version: 1.21.5" >> artifacts/README.txt
+        echo "Minecraft Version: 1.21.4" >> artifacts/README.txt
         echo "Based on: Paper" >> artifacts/README.txt
 
         ls -la artifacts/
