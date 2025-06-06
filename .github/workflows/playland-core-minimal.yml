@@ -32,8 +32,13 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
+    - name: List available tasks
+      run: ./gradlew tasks --stacktrace --no-daemon --max-workers=1
+
     - name: Clean and Apply Patches (GitHub optimized)
       run: |
+        rm -rf .gradle/caches/paperweight*
+        rm -rf paper-source
         ./gradlew clean --stacktrace --no-daemon --max-workers=1
         ./gradlew applyPatches --stacktrace --no-daemon --max-workers=1
       env:
