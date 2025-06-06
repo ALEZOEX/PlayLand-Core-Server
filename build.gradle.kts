@@ -52,13 +52,8 @@ paperweight {
     remapRepo = "https://maven.quiltmc.org/repository/release/"
     decompileRepo = "https://maven.quiltmc.org/repository/release/"
 
-    useStandardUpstream("paper") {
-        url = github("PaperMC", "Paper")
-        ref = providers.gradleProperty("paperRef")
-
-        withStandardPatcher {
-            baseName("Paper")
-
+    usePaperUpstream(providers.gradleProperty("paperRef")) {
+        withPaperPatcher {
             apiPatchDir = layout.projectDirectory.dir("patches/api")
             apiOutputDir = layout.projectDirectory.dir("playland-api")
 

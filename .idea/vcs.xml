@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/paper-source" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/playland-real-fork" vcs="Git" />
+  </component>
+</project>
