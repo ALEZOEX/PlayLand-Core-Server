@@ -32,8 +32,10 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    - name: Apply Patches (GitHub optimized)
-      run: ./gradlew applyPatches --stacktrace --no-daemon --max-workers=1
+    - name: Clean and Apply Patches (GitHub optimized)
+      run: |
+        ./gradlew clean --stacktrace --no-daemon --max-workers=1
+        ./gradlew applyPatches --stacktrace --no-daemon --max-workers=1
       env:
         GRADLE_OPTS: "-Xmx5g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -XX:G1HeapRegionSize=32m -XX:+DisableExplicitGC"
 
