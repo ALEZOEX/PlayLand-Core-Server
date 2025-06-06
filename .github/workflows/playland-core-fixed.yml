@@ -29,18 +29,21 @@ jobs:
         git config --global user.email "no-reply@github.com"
         git config --global user.name "GitHub Actions"
 
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+
     - name: Apply Patches
       run: ./gradlew applyPatches --stacktrace --no-daemon
       env:
         GRADLE_OPTS: "-Xmx3g -Xms1g -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:+DisableExplicitGC"
 
     - name: Build PlayLand Core Server (Mojmap)
-      run: ./gradlew :paper-server:createMojmapPaperclipJar --stacktrace --no-daemon --max-workers=1
+      run: ./gradlew :playland-server:createMojmapPaperclipJar --stacktrace --no-daemon --max-workers=1
       env:
         GRADLE_OPTS: "-Xmx3g -Xms1g -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:+DisableExplicitGC"
 
     - name: Build PlayLand Core Server (Reobf)
-      run: ./gradlew :paper-server:createReobfPaperclipJar --stacktrace --no-daemon --max-workers=1
+      run: ./gradlew :playland-server:createReobfPaperclipJar --stacktrace --no-daemon --max-workers=1
       env:
         GRADLE_OPTS: "-Xmx3g -Xms1g -XX:MaxMetaspaceSize=512m -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:+DisableExplicitGC"
 
@@ -49,7 +52,7 @@ jobs:
       with:
         name: PlayLand-Core-Server-v2.2.0-build-${{ github.run_number }}
         path: |
-          paper-server/build/libs/*paperclip*.jar
+          playland-server/build/libs/*paperclip*.jar
         retention-days: 30
 
     - name: Create Release
@@ -84,7 +87,7 @@ jobs:
 
           Built from commit: ${{ github.sha }}
         files: |
-          paper-server/build/libs/*paperclip*.jar
+          playland-server/build/libs/*paperclip*.jar
         draft: false
         prerelease: false
       env:
