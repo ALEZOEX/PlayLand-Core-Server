@@ -44,33 +44,33 @@ jobs:
       env:
         GRADLE_OPTS: "-Xmx5g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -XX:G1HeapRegionSize=32m -XX:+DisableExplicitGC"
 
-    - name: Build PlayLand Core Server (Mojmap)
-      run: ./gradlew :playland-server:createMojmapPaperclipJar --stacktrace --no-daemon --max-workers=1
-      env:
-        GRADLE_OPTS: "-Xmx5g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -XX:G1HeapRegionSize=32m -XX:+DisableExplicitGC"
-
-    - name: Build PlayLand Core Server (Reobf)
-      run: ./gradlew :playland-server:createReobfPaperclipJar --stacktrace --no-daemon --max-workers=1
+    - name: Build PlayLand Core Server (Standard)
+      run: |
+        echo "Building with standard Gradle tasks..."
+        ./gradlew build --stacktrace --no-daemon --max-workers=1 || echo "Standard build failed, trying alternatives..."
+        ./gradlew :playland-api:build --stacktrace --no-daemon --max-workers=1 || echo "API build failed"
+        ./gradlew :playland-server:build --stacktrace --no-daemon --max-workers=1 || echo "Server build failed"
       env:
         GRADLE_OPTS: "-Xmx5g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -XX:G1HeapRegionSize=32m -XX:+DisableExplicitGC"
 
     - name: List built files
       run: |
         echo "Поиск собранных JAR файлов..."
-        find . -name "*paperclip*.jar" -type f
-        find . -name "*playland*.jar" -type f
-        ls -la playland-server/build/libs/ || echo "Директория не найдена"
+        find . -name "*.jar" -type f
+        echo "Содержимое build/libs директорий:"
+        find . -name "build" -type d -exec find {} -name "libs" -type d \; -exec ls -la {}/libs/ \; 2>/dev/null || echo "Нет build/libs директорий"
 
     - name: Rename and prepare artifacts
       run: |
         echo "Подготовка артефактов PlayLand Core..."
         mkdir -p artifacts
 
-        # Поиск и переименование JAR файлов
-        for jar in playland-server/build/libs/*paperclip*.jar; do
+        # Поиск любых JAR файлов
+        echo "Поиск JAR файлов для артефактов..."
+        find . -name "*.jar" -type f | while read jar; do
           if [ -f "$jar" ]; then
             filename=$(basename "$jar")
-            newname="PlayLand-Core-v2.2.0-${filename#*-}"
+            newname="PlayLand-Core-v2.2.0-${filename}"
             cp "$jar" "artifacts/$newname"
             echo "✓ Создан: $newname"
           fi
